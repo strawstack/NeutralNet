@@ -1,0 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap');
+
+:root {
+    --viewport-width: 0px;
+    --viewport-height: 0px;
+    --line: 2px;
+    --space: 100px;
+    --grid: #eee;
+    --offset-x: 0px;
+    --offset-y: 0px;
+}
+
+html, body {
+    padding: 0px;
+    margin: 0px;
+    overflow: hidden;
+}
+
+body {
+    min-height: 100vh;
+    font-family: "Nunito", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-style: normal;
+    font-size: 1.3rem;
+}
+
+.app {
+    height: 100vh;
+    width: 100vw;
+
+    svg {
+        overflow: visible;
+        width: 100vw;
+        height: 100vh;
+    }
+
+}
