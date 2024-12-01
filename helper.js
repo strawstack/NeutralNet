@@ -21,11 +21,12 @@ export function helper({ svg }) {
             },
             style: {
                 fill: "white",
-                stroke: "#222",
+                stroke: "#555",
                 strokeWidth: 3
             }
         });
         svg.appendChild(node);
+        return node;
     }
 
     function subv(a, b) {
