@@ -1,4 +1,9 @@
-export function hyperspace(userSvg) {
+export function hyperspace({
+    svg: userSvg,
+    mousemove,
+    mousedown,
+    mouseup
+}) {
     const qs = s => document.querySelector(s);
     
     //
@@ -22,6 +27,20 @@ export function hyperspace(userSvg) {
     //
     // HELPER
     //
+
+    const mulv = (a, b) => {
+        return {
+            x: a.x * b,
+            y: a.y * b
+        };
+    };
+
+    const addv = (a, b) => {
+        return {
+            x: a.x + b.x,
+            y: a.y + b.y
+        };
+    };
 
     const subv = (a, b) => {
         return {
@@ -183,11 +202,25 @@ export function hyperspace(userSvg) {
 
         state.data.mouse.pos = pos;
         setViewbox(state.data.viewBox);
+        mousemove(e);
     });
     svg.addEventListener("mousedown", e => {
         state.data.mouse.isDown = true;
+        mousedown(e);
     });
     svg.addEventListener("mouseup", e => {
         state.data.mouse.isDown = false;
+        mouseup(e);
     });
+
+    return {
+        toHyperspace: ({x, y}) => {
+            const pixelRatio = state.data.viewBox.width / pageWidth;
+            const { minx, miny } = state.data.viewBox;
+            return addv(
+                mulv({x, y}, pixelRatio),
+                { x: minx, y: miny }
+            );
+        }
+    };
 }
