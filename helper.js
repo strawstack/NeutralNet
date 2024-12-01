@@ -10,12 +10,14 @@ export function helper({ svg }) {
         return node;
     }
     
-    function createVertex({ x, y }) {
+    function createVertex({ id, pos }) {
         const node = createNode("circle", {
             attr: {
+                class: 'vertex',
                 r: 50,
-                cx: x,
-                cy: y
+                cx: pos.x,
+                cy: pos.y,
+                'data-id': id
             },
             style: {
                 fill: "white",
@@ -43,12 +45,38 @@ export function helper({ svg }) {
             id += 1;
             return id;
         };
-    });
+    })();
+
+    function qs(s) {
+        return document.querySelector(s);
+    }
+
+    function qsa(s) {
+        return document.querySelectorAll(s);
+    }
+
+    function addVertex(state, data) {
+        const base = {
+            pos: {x: 0, y: 0},
+            data: {
+                style: {}
+            },
+            edges: []
+        };
+        state.verticies[data.id] = {...base, ...data};
+    }
+
+    function vertexData(data) {
+
+        return ;
+    }
 
     return {
         createVertex,
+        addVertex,
         subv,
         magv,
-        uid
+        uid,
+        qsa
     };
 }

@@ -6,9 +6,11 @@ export function neutralnet() {
 
     const {
         createVertex,
+        addVertex,
         subv,
         magv,
-        uid
+        uid,
+        qsa
     } = helper({ svg });
 
     const state = {
@@ -43,9 +45,28 @@ export function neutralnet() {
     };
 
     function render(s) {
+        const verticies = (() => {
+            const lookup = {};
+            qsa(".vertex").forEach(v => {
+                const vid = v.dataset.id;
+                lookup[vid] = v;
+            });
+            return lookup;
+        })();
+
+        const newVerticies = Object.values(state.verticies).filter(({ id }) => {
+            return !(id in verticies);
+        });
+
         // If new state nodes are present, create svg nodes for them
+        newVerticies.forEach(({id, pos}) => createVertex({id, pos}));
+
+        const oldVerticies = Object.keys(verticies).map((vid) => {
+            return (!(vid in state.verticies)) ? verticies[vid] : null;
+        }).filter(v => v !== null);
 
         // If svg nodes are present without state nodes, delete them
+        oldVerticies.forEach(v => v.remove());
 
         // Position and style svg nodes according to state
         
@@ -65,9 +86,10 @@ export function neutralnet() {
     //
     svg.addEventListener("click", e => {
         if (state.data.mouse.isClick) {
-            createVertex(
-                hs(state.data.mouse.pos)
-            );
+            addVertex(state, {
+                id: uid(),
+                pos: hs(state.data.mouse.pos)
+            });
         }
     });
 
@@ -92,4 +114,8 @@ export function neutralnet() {
     function mouseup(e) {
 
     }
+
+    window.addEventListener("keydown", e => {
+        delete state.verticies['0'];
+    });
 }
