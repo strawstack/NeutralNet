@@ -4,4 +4,7 @@ A weighted graph building tool that stores arbitrary node and edge attributes an
 
 # Todo
 
-- [ ] If drag then cancel click event to prevent appearance of vertex 
+- [ ] 
+
+# Done
+- [x] If drag then cancel click event to prevent appearance of vertex 

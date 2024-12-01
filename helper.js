@@ -13,18 +13,42 @@ export function helper({ svg }) {
     function createVertex({ x, y }) {
         const node = createNode("circle", {
             attr: {
-                r: 100,
+                r: 50,
                 cx: x,
                 cy: y
             },
             style: {
-    
+                fill: "white",
+                stroke: "#222",
+                strokeWidth: 3
             }
         });
         svg.appendChild(node);
     }
 
+    function subv(a, b) {
+        return {
+            x: a.x - b.x,
+            y: a.y - b.y
+        };
+    }
+
+    function magv(a) {
+        return Math.sqrt(Math.pow(a.x, 2) + Math.pow(a.y, 2));
+    }
+
+    const uid = (() => {
+        let id = -1;
+        return () => {
+            id += 1;
+            return id;
+        };
+    });
+
     return {
-        createVertex
+        createVertex,
+        subv,
+        magv,
+        uid
     };
 }

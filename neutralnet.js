@@ -5,19 +5,11 @@ export function neutralnet() {
     const svg = document.querySelector("svg");
 
     const {
-        createVertex
+        createVertex,
+        subv,
+        magv,
+        uid
     } = helper({ svg });
-
-    //
-    // Helper
-    //
-    const uid = (() => {
-        let id = -1;
-        return () => {
-            id += 1;
-            return id;
-        };
-    });
 
     const state = {
         verticies: {
@@ -42,7 +34,10 @@ export function neutralnet() {
         data: {
             mouse: {
                 pos: { x: 0, y: 0 },
-                isDown: false
+                isDown: false,
+                isClick: false,
+                downLocation: { x: 0, y: 0 },
+                clickLimit: 5
             }
         }
     };
@@ -69,9 +64,11 @@ export function neutralnet() {
     // Events
     //
     svg.addEventListener("click", e => {
-        createVertex(
-            hs(state.data.mouse.pos)
-        );
+        if (state.data.mouse.isClick) {
+            createVertex(
+                hs(state.data.mouse.pos)
+            );
+        }
     });
 
     function mousemove(e) {
@@ -79,10 +76,17 @@ export function neutralnet() {
             x: e.clientX,
             y: e.clientY
         };
+
+        // If mouse moves while down, it doesn't count as a click
+        const { pos, downLocation, clickLimit } = state.data.mouse;
+        if (magv(subv(pos, downLocation)) > clickLimit) {
+            state.data.mouse.isClick = false;
+        }
     }
 
     function mousedown(e) {
-
+        state.data.mouse.isClick = true;
+        state.data.mouse.downLocation = state.data.mouse.pos;
     }
 
     function mouseup(e) {
