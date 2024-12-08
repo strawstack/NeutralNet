@@ -7,6 +7,7 @@ export function neutralnet() {
     const {
         createVertex,
         addVertex,
+        addv,
         subv,
         magv,
         uid,
@@ -42,10 +43,18 @@ export function neutralnet() {
                 clickLimit: 5
             },
             select: {
-                target: null
+                target: null,
+                offset: null
             }
         }
     };
+
+    const { toHyperspace: hs } = hyperspace({
+        svg,
+        mousedown,
+        mousemove,
+        mouseup
+    });
 
     function render(s) {
         const verticies = (() => {
@@ -57,7 +66,7 @@ export function neutralnet() {
             return lookup;
         })();
 
-        const newVerticies = Object.values(state.verticies).filter(({ id }) => {
+        const newVerticies = Object.values(s.verticies).filter(({ id }) => {
             return !(id in verticies);
         });
 
@@ -65,33 +74,15 @@ export function neutralnet() {
         newVerticies.forEach(({id, pos}) => {
             const vertex = createVertex({id, pos});
             verticies[id] = vertex;
-            
             vertex.addEventListener("mousedown", e => {
-                state.data.select.target = vertex;
-                e.stopPropagation();
-            });
-            vertex.addEventListener("mousemove", e => {
-                if (state.data.select.target) {
-
-                    const pos = {
-                        x: e.clientX,
-                        y: e.clientY
-                    };
-            
-                    const delta = subv(
-                        state.data.mouse.pos,
-                        pos
-                    );
-
-                    console.log(delta);
-
-                    state.data.mouse.pos = pos;
-
-                }
+                s.data.select.target = vertex;
+                const { pos } = s.verticies[id];
+                const offset = subv(pos, hs(s.data.mouse.pos));
+                s.data.select.offset = offset;
                 e.stopPropagation();
             });
             vertex.addEventListener("mouseup", e => {
-                state.data.select.target = null;
+                s.data.select.target = null;
                 e.stopPropagation();
             });
 
@@ -104,18 +95,19 @@ export function neutralnet() {
         // If svg nodes are present without state nodes, delete them
         oldVerticies.forEach(v => v.remove());
 
-        // Position and style svg nodes according to state
+        // Position verticies
+        for (let vid in verticies) {
+            const { pos } = s.verticies[vid];
+            const ref = verticies[vid];
+            ref.setAttribute("cx", pos.x);
+            ref.setAttribute("cy", pos.y);
+        }
+        
+        // Style svg nodes according to state
         
         requestAnimationFrame(() => render(state));
     }
     requestAnimationFrame(() => render(state));
-
-    const { toHyperspace: hs } = hyperspace({
-        svg,
-        mousedown,
-        mousemove,
-        mouseup
-    });
 
     //
     // Events
@@ -129,8 +121,14 @@ export function neutralnet() {
 
         // If mouse moves while down, it doesn't count as a click
         const { pos, downLocation, clickLimit } = state.data.mouse;
-        if (magv(subv(pos, downLocation)) > clickLimit) {
+        if (magv(subv(pos, hs(downLocation))) > clickLimit) {
             state.data.mouse.isClick = false;
+        }
+
+        if (state.data.select.target) {
+            const vertex = state.data.select.target;
+            const vid = vertex.dataset.id;
+            state.verticies[vid].pos = addv(hs(state.data.mouse.pos), state.data.select.offset);
         }
     }
 

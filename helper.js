@@ -29,6 +29,13 @@ export function helper({ svg }) {
         return node;
     }
 
+    function addv(a, b) {
+        return {
+            x: a.x + b.x,
+            y: a.y + b.y
+        };
+    }
+
     function subv(a, b) {
         return {
             x: a.x - b.x,
@@ -75,6 +82,7 @@ export function helper({ svg }) {
     return {
         createVertex,
         addVertex,
+        addv,
         subv,
         magv,
         uid,
